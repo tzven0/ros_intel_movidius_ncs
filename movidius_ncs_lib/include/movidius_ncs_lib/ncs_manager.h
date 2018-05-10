@@ -59,7 +59,8 @@ public:
                     const sensor_msgs::ImageConstPtr& image_msg);
   std::vector<ClassificationResultPtr> classifyImage(const std::vector<std::string>& images);
   std::vector<DetectionResultPtr> detectImage(const std::vector<std::string>& images);
-
+  std::vector<DetectionResultPtr> detectImages(const std::vector<sensor_msgs::Image>& images);
+  
 private:
   void initDeviceManager();
   void deviceThread(int device_index);

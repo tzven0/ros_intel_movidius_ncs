@@ -260,6 +260,34 @@ bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
   return true;
 }
 
+bool NCSServer::cbDetectImages(object_msgs::DetectImages::Request& request,
+                               object_msgs::DetectImages::Response& response)
+{
+
+  std::vector<DetectionResultPtr> results = ncs_manager_handle_->detectImages(request.images);
+
+  for (unsigned int i = 0; i < results.size(); i++)
+  {
+    object_msgs::ObjectsInBoxes objs;
+    for (auto item : results[i]->items_in_boxes)
+    {
+      object_msgs::ObjectInBox obj;
+      obj.object.object_name = item.item.category;
+      obj.object.probability = item.item.probability;
+      obj.roi.x_offset = item.bbox.x;
+      obj.roi.y_offset = item.bbox.y;
+      obj.roi.width = item.bbox.width;
+      obj.roi.height = item.bbox.height;
+      objs.objects_vector.push_back(obj);
+    }
+
+    objs.inference_time_ms = results[i]->time_taken;
+    response.objects.push_back(objs);
+  }
+
+  return true;
+}
+
 }  // namespace movidius_ncs_image
 
 int main(int argc, char** argv)

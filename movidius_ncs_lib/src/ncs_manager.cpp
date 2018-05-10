@@ -20,6 +20,8 @@
 #include <image_transport/image_transport.h>
 #include "movidius_ncs_lib/ncs_manager.h"
 
+#include <cv_bridge/cv_bridge.h>
+
 namespace movidius_ncs_lib
 {
 NCSManager::NCSManager(const int& max_device_number, const int& start_device_index, const Device::LogLevel& log_level,
@@ -192,6 +194,76 @@ std::vector<DetectionResultPtr> NCSManager::detectImage(const std::vector<std::s
   for (int i = 0; i < parallel_left; i++)
   {
     cv::Mat imageData = cv::imread(images[parallel_group * (device_count_ - start_device_index_) + i]);
+    ncs_handle_list_[i]->loadTensor(imageData);
+    ncs_handle_list_[i]->detect();
+    DetectionResultPtr result = ncs_handle_list_[i]->getDetectionResult();
+    results[parallel_group * (device_count_ - start_device_index_) + i] = std::make_shared<DetectionResult>(*result);
+  }
+
+  return results;
+}
+
+// detection of multiple images from sensor_msgs/Image array
+std::vector<DetectionResultPtr> NCSManager::detectImages(const std::vector<sensor_msgs::Image>& images)
+{
+  int image_size = static_cast<int>(images.size());
+  std::vector<DetectionResultPtr> results(image_size);
+
+  int parallel_group = image_size / (device_count_ - start_device_index_);
+  int parallel_left = image_size % (device_count_ - start_device_index_);
+
+  for (int i = 0; i < parallel_group; i++)
+  {
+#pragma omp parallel for
+    for (int device_index = 0; device_index < device_count_ - start_device_index_; device_index++)
+    {
+      //cv::Mat imageData = cv::imread(images[i * (device_count_ - start_device_index_) + device_index]);
+      
+      // load cv::Mat from sensor_msgs/Image
+      cv_bridge::CvImagePtr cv_ptr;
+
+      sensor_msgs::Image currimage = images[i * (device_count_ - start_device_index_) + device_index];
+
+      try
+      {
+        cv_ptr = cv_bridge::toCvCopy(currimage, sensor_msgs::image_encodings::BGR8);
+      }
+      catch (cv_bridge::Exception& e)
+      {
+        ROS_ERROR("cv_bridge exception: %s", e.what());
+        continue;
+      }
+
+      cv::Mat imageData = cv_ptr->image;
+
+      ncs_handle_list_[device_index]->loadTensor(imageData);
+      ncs_handle_list_[device_index]->detect();
+      DetectionResultPtr result = ncs_handle_list_[device_index]->getDetectionResult();
+      results[i * (device_count_ - start_device_index_) + device_index] = std::make_shared<DetectionResult>(*result);
+    }
+  }
+
+  for (int i = 0; i < parallel_left; i++)
+  {
+    //cv::Mat imageData = cv::imread(images[parallel_group * (device_count_ - start_device_index_) + i]);
+    
+    // load cv::Mat from sensor_msgs/Image
+    cv_bridge::CvImagePtr cv_ptr;
+    //sensor_msgs::Image currimage = images[parallel_group * (device_count_ - start_device_index_) + i];
+    sensor_msgs::Image currimage = images[parallel_group * (device_count_ - start_device_index_) + i];
+    //sensor_msgs::ImageConstPtr currimage = images[parallel_group * (device_count_ - start_device_index_) + i];
+    try
+    {
+      cv_ptr = cv_bridge::toCvCopy(currimage, sensor_msgs::image_encodings::BGR8);
+    }
+    catch (cv_bridge::Exception& e)
+    {
+      ROS_ERROR("cv_bridge exception: %s", e.what());
+      continue;
+    }
+
+    cv::Mat imageData = cv_ptr->image;
+
     ncs_handle_list_[i]->loadTensor(imageData);
     ncs_handle_list_[i]->detect();
     DetectionResultPtr result = ncs_handle_list_[i]->getDetectionResult();

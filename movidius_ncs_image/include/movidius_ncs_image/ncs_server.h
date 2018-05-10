@@ -24,6 +24,7 @@
 
 #include <object_msgs/ClassifyObject.h>
 #include <object_msgs/DetectObject.h>
+#include <object_msgs/DetectImages.h>
 #include "movidius_ncs_lib/ncs.h"
 #include "movidius_ncs_lib/ncs_manager.h"
 
@@ -39,6 +40,7 @@ private:
   void init();
 
   bool cbDetectObject(object_msgs::DetectObject::Request& request, object_msgs::DetectObject::Response& response);
+  bool cbDetectImages(object_msgs::DetectImages::Request& request, object_msgs::DetectImages::Response& response);
   bool cbClassifyObject(object_msgs::ClassifyObject::Request& request, object_msgs::ClassifyObject::Response& response);
 
   ros::ServiceServer service_;
