@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslint
   rostest
+  cv_bridge
 )
 
 catkin_package(
