@@ -207,6 +207,7 @@ void NCSServer::init()
   else
   {
     service_ = nh_.advertiseService("detect_object", &NCSServer::cbDetectObject, this);
+    images_service_ = nh_.advertiseService("detect_images", &NCSServer::cbDetectImages, this);
   }
 }
 

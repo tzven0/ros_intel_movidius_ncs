@@ -204,6 +204,7 @@ std::vector<DetectionResultPtr> NCSManager::detectImage(const std::vector<std::s
 }
 
 // detection of multiple images from sensor_msgs/Image array
+
 std::vector<DetectionResultPtr> NCSManager::detectImages(const std::vector<sensor_msgs::Image>& images)
 {
   int image_size = static_cast<int>(images.size());

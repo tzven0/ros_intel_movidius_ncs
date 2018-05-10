@@ -44,6 +44,7 @@ private:
   bool cbClassifyObject(object_msgs::ClassifyObject::Request& request, object_msgs::ClassifyObject::Response& response);
 
   ros::ServiceServer service_;
+  ros::ServiceServer images_service_;
 
   std::shared_ptr<movidius_ncs_lib::NCSManager> ncs_manager_handle_;
   ros::NodeHandle nh_;
