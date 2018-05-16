@@ -220,6 +220,7 @@ void NCS::loadGraph(const std::string& graph_file_path)
 
 void NCS::loadCategories(const std::string& category_file_path)
 {
+ROS_INFO("LOADING CATEGORIES");
   try
   {
     std::string content = getFileContent(category_file_path);
@@ -231,6 +232,7 @@ void NCS::loadCategories(const std::string& category_file_path)
     {
       categories_.erase(categories_.begin());
     }
+    ROS_INFO("CATEGORIES LOADED");
   }
   catch (int& e)
   {
