@@ -48,6 +48,7 @@ NCSServer::NCSServer(ros::NodeHandle& nh)
   , top_n_(1)
 {
   getParameters();
+  ROS_INFO("VOR INIT SERVER");
   init();
 }
 
@@ -193,7 +194,7 @@ void NCSServer::getParameters()
 void NCSServer::init()
 {
   ROS_DEBUG("NCSServer init");
-
+  ROS_INFO("NCSSERVER INIT"); 
   ncs_manager_handle_ = std::make_shared<NCSManager>(
       max_device_number_, start_device_index_, static_cast<Device::LogLevel>(log_level_), cnn_type_, graph_file_path_,
       category_file_path_, network_dimension_, mean_, scale_, top_n_);

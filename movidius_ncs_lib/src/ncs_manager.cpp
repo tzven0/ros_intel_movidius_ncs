@@ -65,6 +65,7 @@ void NCSManager::initDeviceManager()
 
   for (int device_index = start_device_index_; device_index < device_count_; device_index++)
   {
+    ROS_INFO("INIT DEVICES");
     auto ncs_handle = std::make_shared<movidius_ncs_lib::NCS>(device_index, static_cast<Device::LogLevel>(log_level_),
                                                               cnn_type_, graph_file_path_, category_file_path_,
                                                               network_dimension_, mean_, scale_, top_n_);

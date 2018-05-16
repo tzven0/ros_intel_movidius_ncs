@@ -178,7 +178,7 @@ int main(int argc, char** argv)
         random_index_list.push_back(random_index);
         srv.request.image_paths.push_back(image_paths[random_index]);
       }
-
+      ROS_INFO("VOR SERVICE CALL!!!");
       if (!client.call(srv))
       {
         ROS_ERROR("failed to call service DetectObject");

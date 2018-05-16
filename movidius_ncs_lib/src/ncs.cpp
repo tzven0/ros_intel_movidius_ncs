@@ -55,9 +55,12 @@ NCS::NCS(int device_index,
   initDevice();
   loadGraph(graph_file_path);
   loadCategories(category_file_path);
+  ROS_INFO("TEST");
   tensor_ = std::make_shared<Tensor>(std::pair<int, int>(network_dimension_, network_dimension_),
                                      mean_, scale_);
+  ROS_INFO("AFTER TENSOR");
   result_ = std::make_shared<Result>(cnn_type_);
+  ROS_INFO("AFTER RESULT");
 }
 
 NCS::~NCS()
@@ -206,6 +209,7 @@ DetectionResultPtr NCS::getDetectionResult()
 
 void NCS::initDevice()
 {
+  ROS_INFO("INIT DEVICE");
   device_.reset(new Device(device_index_,
                            static_cast<Device::LogLevel>(log_level_)));
 }
